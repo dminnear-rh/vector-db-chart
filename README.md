@@ -2,140 +2,135 @@
 
 ![Version: 0.1.0](https://img.shields.io/badge/Version-0.1.0-informational?style=flat-square) ![Type: application](https://img.shields.io/badge/Type-application-informational?style=flat-square) ![AppVersion: 0.1.0](https://img.shields.io/badge/AppVersion-0.1.0-informational?style=flat-square)
 
-Vector database services and document embedding for RAG pipeline
+This chart deploys vector database services and document processing components for the RAG (Retrieval-Augmented Generation) pipeline. It provides multiple database backend options and automated document embedding capabilities as part of a RAG-LLM Validated Pattern.
 
-This chart is used to serve as the template for Validated Patterns Charts
+**Note**: This chart is designed for testing and demonstration purposes, allowing easy comparison between different vector database providers. For production deployments, consider using dedicated operators and charts specifically tuned for your chosen database provider.
 
-## Notable changes
+## Configuration
 
-## Values
+The chart deploys the following main components:
 
-| Key                                                                     | Type   | Default                                                                                                                                                            | Description |
-| ----------------------------------------------------------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ----------- |
-| global.embeddingModel                                                   | string | `"sentence-transformers/all-mpnet-base-v2"`                                                                                                                        |             |
-| providers.elastic.deployment.env[0].name                                | string | `"discovery.type"`                                                                                                                                                 |             |
-| providers.elastic.deployment.env[0].value                               | string | `"single-node"`                                                                                                                                                    |             |
-| providers.elastic.deployment.env[1].name                                | string | `"xpack.security.enabled"`                                                                                                                                         |             |
-| providers.elastic.deployment.env[1].value                               | string | `"false"`                                                                                                                                                          |             |
-| providers.elastic.deployment.env[2].name                                | string | `"ES_JAVA_OPTS"`                                                                                                                                                   |             |
-| providers.elastic.deployment.env[2].value                               | string | `"-Xms512m -Xmx512m"`                                                                                                                                              |             |
-| providers.elastic.deployment.env[3].name                                | string | `"ELASTIC_USER"`                                                                                                                                                   |             |
-| providers.elastic.deployment.env[3].valueFrom.secretKeyRef.key          | string | `"user"`                                                                                                                                                           |             |
-| providers.elastic.deployment.env[3].valueFrom.secretKeyRef.name         | string | `"elastic-secret"`                                                                                                                                                 |             |
-| providers.elastic.deployment.env[4].name                                | string | `"ELASTIC_PASSWORD"`                                                                                                                                               |             |
-| providers.elastic.deployment.env[4].valueFrom.secretKeyRef.key          | string | `"password"`                                                                                                                                                       |             |
-| providers.elastic.deployment.env[4].valueFrom.secretKeyRef.name         | string | `"elastic-secret"`                                                                                                                                                 |             |
-| providers.elastic.deployment.image                                      | string | `"docker.elastic.co/elasticsearch/elasticsearch:8.12.1"`                                                                                                           |             |
-| providers.elastic.enabled                                               | bool   | `false`                                                                                                                                                            |             |
-| providers.elastic.jobEnv[0].name                                        | string | `"ELASTIC_INDEX"`                                                                                                                                                  |             |
-| providers.elastic.jobEnv[0].value                                       | string | `"docs"`                                                                                                                                                           |             |
-| providers.elastic.jobEnv[1].name                                        | string | `"ELASTIC_URL"`                                                                                                                                                    |             |
-| providers.elastic.jobEnv[1].value                                       | string | `"http://elastic-service:9200"`                                                                                                                                    |             |
-| providers.elastic.jobEnv[2].name                                        | string | `"ELASTIC_USER"`                                                                                                                                                   |             |
-| providers.elastic.jobEnv[2].valueFrom.secretKeyRef.key                  | string | `"user"`                                                                                                                                                           |             |
-| providers.elastic.jobEnv[2].valueFrom.secretKeyRef.name                 | string | `"elastic-secret"`                                                                                                                                                 |             |
-| providers.elastic.jobEnv[3].name                                        | string | `"ELASTIC_PASSWORD"`                                                                                                                                               |             |
-| providers.elastic.jobEnv[3].valueFrom.secretKeyRef.key                  | string | `"password"`                                                                                                                                                       |             |
-| providers.elastic.jobEnv[3].valueFrom.secretKeyRef.name                 | string | `"elastic-secret"`                                                                                                                                                 |             |
-| providers.elastic.persistence                                           | object | `{}`                                                                                                                                                               |             |
-| providers.elastic.secrets.vault.fields[0]                               | string | `"user"`                                                                                                                                                           |             |
-| providers.elastic.secrets.vault.fields[1]                               | string | `"password"`                                                                                                                                                       |             |
-| providers.elastic.service.port                                          | int    | `9200`                                                                                                                                                             |             |
-| providers.mssql.deployment.containerSecurityContext.capabilities.add[0] | string | `"NET_BIND_SERVICE"`                                                                                                                                               |             |
-| providers.mssql.deployment.env[0].name                                  | string | `"ACCEPT_EULA"`                                                                                                                                                    |             |
-| providers.mssql.deployment.env[0].value                                 | string | `"y"`                                                                                                                                                              |             |
-| providers.mssql.deployment.env[1].name                                  | string | `"MSSQL_SA_PASSWORD"`                                                                                                                                              |             |
-| providers.mssql.deployment.env[1].valueFrom.secretKeyRef.key            | string | `"sapassword"`                                                                                                                                                     |             |
-| providers.mssql.deployment.env[1].valueFrom.secretKeyRef.name           | string | `"mssql-secret"`                                                                                                                                                   |             |
-| providers.mssql.deployment.image                                        | string | `"mcr.microsoft.com/mssql/rhel/server:2025-latest"`                                                                                                                |             |
-| providers.mssql.enabled                                                 | bool   | `false`                                                                                                                                                            |             |
-| providers.mssql.jobEnv[0].name                                          | string | `"MSSQL_TABLE"`                                                                                                                                                    |             |
-| providers.mssql.jobEnv[0].value                                         | string | `"docs"`                                                                                                                                                           |             |
-| providers.mssql.jobEnv[1].name                                          | string | `"MSSQL_CONNECTION_STRING"`                                                                                                                                        |             |
-| providers.mssql.jobEnv[1].valueFrom.secretKeyRef.key                    | string | `"mssql_connection_string"`                                                                                                                                        |             |
-| providers.mssql.jobEnv[1].valueFrom.secretKeyRef.name                   | string | `"mssql-secret"`                                                                                                                                                   |             |
-| providers.mssql.persistence.volumeMounts[0].mountPath                   | string | `"/var/opt/mssql"`                                                                                                                                                 |             |
-| providers.mssql.persistence.volumeMounts[0].name                        | string | `"data"`                                                                                                                                                           |             |
-| providers.mssql.persistence.volumes[0].emptyDir                         | object | `{}`                                                                                                                                                               |             |
-| providers.mssql.persistence.volumes[0].name                             | string | `"data"`                                                                                                                                                           |             |
-| providers.mssql.secrets.vault.connectionString.key                      | string | `"mssql_connection_string"`                                                                                                                                        |             |
-| providers.mssql.secrets.vault.connectionString.template                 | string | `"Driver={ODBC Driver 18 for SQL Server}; Server=mssql-service,1433; Database=embeddings; UID=sa; PWD={{ .sapassword }}; TrustServerCertificate=yes; Encrypt=no;"` |             |
-| providers.mssql.secrets.vault.fields[0]                                 | string | `"sapassword"`                                                                                                                                                     |             |
-| providers.mssql.service.port                                            | int    | `1433`                                                                                                                                                             |             |
-| providers.pgvector.deployment.env[0].name                               | string | `"POSTGRES_DB"`                                                                                                                                                    |             |
-| providers.pgvector.deployment.env[0].valueFrom.secretKeyRef.key         | string | `"db"`                                                                                                                                                             |             |
-| providers.pgvector.deployment.env[0].valueFrom.secretKeyRef.name        | string | `"pgvector-secret"`                                                                                                                                                |             |
-| providers.pgvector.deployment.env[1].name                               | string | `"POSTGRES_USER"`                                                                                                                                                  |             |
-| providers.pgvector.deployment.env[1].valueFrom.secretKeyRef.key         | string | `"user"`                                                                                                                                                           |             |
-| providers.pgvector.deployment.env[1].valueFrom.secretKeyRef.name        | string | `"pgvector-secret"`                                                                                                                                                |             |
-| providers.pgvector.deployment.env[2].name                               | string | `"POSTGRES_PASSWORD"`                                                                                                                                              |             |
-| providers.pgvector.deployment.env[2].valueFrom.secretKeyRef.key         | string | `"password"`                                                                                                                                                       |             |
-| providers.pgvector.deployment.env[2].valueFrom.secretKeyRef.name        | string | `"pgvector-secret"`                                                                                                                                                |             |
-| providers.pgvector.deployment.image                                     | string | `"pgvector/pgvector:0.8.1-pg18-trixie"`                                                                                                                            |             |
-| providers.pgvector.enabled                                              | bool   | `false`                                                                                                                                                            |             |
-| providers.pgvector.jobEnv[0].name                                       | string | `"PGVECTOR_COLLECTION_NAME"`                                                                                                                                       |             |
-| providers.pgvector.jobEnv[0].value                                      | string | `"docs"`                                                                                                                                                           |             |
-| providers.pgvector.jobEnv[1].name                                       | string | `"PGVECTOR_URL"`                                                                                                                                                   |             |
-| providers.pgvector.jobEnv[1].valueFrom.secretKeyRef.key                 | string | `"pgvector_url"`                                                                                                                                                   |             |
-| providers.pgvector.jobEnv[1].valueFrom.secretKeyRef.name                | string | `"pgvector-secret"`                                                                                                                                                |             |
-| providers.pgvector.persistence.volumeMounts[0].mountPath                | string | `"/var/lib/postgresql"`                                                                                                                                            |             |
-| providers.pgvector.persistence.volumeMounts[0].name                     | string | `"data"`                                                                                                                                                           |             |
-| providers.pgvector.persistence.volumeMounts[1].mountPath                | string | `"/var/run/postgresql"`                                                                                                                                            |             |
-| providers.pgvector.persistence.volumeMounts[1].name                     | string | `"run"`                                                                                                                                                            |             |
-| providers.pgvector.persistence.volumes[0].emptyDir                      | object | `{}`                                                                                                                                                               |             |
-| providers.pgvector.persistence.volumes[0].name                          | string | `"data"`                                                                                                                                                           |             |
-| providers.pgvector.persistence.volumes[1].emptyDir                      | object | `{}`                                                                                                                                                               |             |
-| providers.pgvector.persistence.volumes[1].name                          | string | `"run"`                                                                                                                                                            |             |
-| providers.pgvector.secrets.vault.connectionString.key                   | string | `"pgvector_url"`                                                                                                                                                   |             |
-| providers.pgvector.secrets.vault.connectionString.template              | string | `"postgresql+psycopg://{{ .user }}:{{ .password }}@pgvector-service:5432/{{ .db }}"`                                                                               |             |
-| providers.pgvector.secrets.vault.fields[0]                              | string | `"user"`                                                                                                                                                           |             |
-| providers.pgvector.secrets.vault.fields[1]                              | string | `"password"`                                                                                                                                                       |             |
-| providers.pgvector.secrets.vault.fields[2]                              | string | `"db"`                                                                                                                                                             |             |
-| providers.pgvector.service.port                                         | int    | `5432`                                                                                                                                                             |             |
-| providers.qdrant.deployment.image                                       | string | `"qdrant/qdrant:latest-unprivileged"`                                                                                                                              |             |
-| providers.qdrant.enabled                                                | bool   | `true`                                                                                                                                                             |             |
-| providers.qdrant.jobEnv[0].name                                         | string | `"QDRANT_COLLECTION"`                                                                                                                                              |             |
-| providers.qdrant.jobEnv[0].value                                        | string | `"docs"`                                                                                                                                                           |             |
-| providers.qdrant.jobEnv[1].name                                         | string | `"QDRANT_URL"`                                                                                                                                                     |             |
-| providers.qdrant.jobEnv[1].value                                        | string | `"http://qdrant-service:6333"`                                                                                                                                     |             |
-| providers.qdrant.persistence.volumeMounts[0].mountPath                  | string | `"/qdrant/storage"`                                                                                                                                                |             |
-| providers.qdrant.persistence.volumeMounts[0].name                       | string | `"data"`                                                                                                                                                           |             |
-| providers.qdrant.persistence.volumeMounts[1].mountPath                  | string | `"/qdrant/snapshots"`                                                                                                                                              |             |
-| providers.qdrant.persistence.volumeMounts[1].name                       | string | `"snapshots"`                                                                                                                                                      |             |
-| providers.qdrant.persistence.volumes[0].emptyDir                        | object | `{}`                                                                                                                                                               |             |
-| providers.qdrant.persistence.volumes[0].name                            | string | `"data"`                                                                                                                                                           |             |
-| providers.qdrant.persistence.volumes[1].emptyDir                        | object | `{}`                                                                                                                                                               |             |
-| providers.qdrant.persistence.volumes[1].name                            | string | `"snapshots"`                                                                                                                                                      |             |
-| providers.qdrant.service.port                                           | int    | `6333`                                                                                                                                                             |             |
-| providers.redis.deployment.image                                        | string | `"redis/redis-stack-server:7.2.0-v19"`                                                                                                                             |             |
-| providers.redis.enabled                                                 | bool   | `false`                                                                                                                                                            |             |
-| providers.redis.jobEnv[0].name                                          | string | `"REDIS_INDEX"`                                                                                                                                                    |             |
-| providers.redis.jobEnv[0].value                                         | string | `"docs"`                                                                                                                                                           |             |
-| providers.redis.jobEnv[1].name                                          | string | `"REDIS_URL"`                                                                                                                                                      |             |
-| providers.redis.jobEnv[1].value                                         | string | `"redis://redis-service:6379"`                                                                                                                                     |             |
-| providers.redis.persistence.volumeMounts[0].mountPath                   | string | `"/data"`                                                                                                                                                          |             |
-| providers.redis.persistence.volumeMounts[0].name                        | string | `"data"`                                                                                                                                                           |             |
-| providers.redis.persistence.volumes[0].emptyDir                         | object | `{}`                                                                                                                                                               |             |
-| providers.redis.persistence.volumes[0].name                             | string | `"data"`                                                                                                                                                           |             |
-| providers.redis.service.port                                            | int    | `6379`                                                                                                                                                             |             |
-| vectorEmbedJob.backoffLimit                                             | int    | `10`                                                                                                                                                               |             |
-| vectorEmbedJob.chunking.overlap                                         | int    | `40`                                                                                                                                                               |             |
-| vectorEmbedJob.chunking.size                                            | int    | `1024`                                                                                                                                                             |             |
-| vectorEmbedJob.image                                                    | string | `"quay.io/validatedpatterns/vector-embedder:latest"`                                                                                                               |             |
-| vectorEmbedJob.logLevel                                                 | string | `"info"`                                                                                                                                                           |             |
-| vectorEmbedJob.repoSources[0].globs[0]                                  | string | `"examples/notebooks/langchain/rhods-doc/*.pdf"`                                                                                                                   |             |
-| vectorEmbedJob.repoSources[0].repo                                      | string | `"https://github.com/RHEcosystemAppEng/llm-on-openshift.git"`                                                                                                      |             |
-| vectorEmbedJob.restartPolicy                                            | string | `"Never"`                                                                                                                                                          |             |
-| vectorEmbedJob.tempDir                                                  | string | `"/tmp"`                                                                                                                                                           |             |
-| vectorEmbedJob.webSources[0]                                            | string | `"https://ai-on-openshift.io/getting-started/openshift/"`                                                                                                          |             |
-| vectorEmbedJob.webSources[1]                                            | string | `"https://ai-on-openshift.io/getting-started/opendatahub/"`                                                                                                        |             |
-| vectorEmbedJob.webSources[2]                                            | string | `"https://ai-on-openshift.io/getting-started/openshift-ai/"`                                                                                                       |             |
-| vectorEmbedJob.webSources[3]                                            | string | `"https://ai-on-openshift.io/odh-rhoai/configuration/"`                                                                                                            |             |
-| vectorEmbedJob.webSources[4]                                            | string | `"https://ai-on-openshift.io/odh-rhoai/custom-notebooks/"`                                                                                                         |             |
-| vectorEmbedJob.webSources[5]                                            | string | `"https://ai-on-openshift.io/odh-rhoai/nvidia-gpus/"`                                                                                                              |             |
-| vectorEmbedJob.webSources[6]                                            | string | `"https://ai-on-openshift.io/odh-rhoai/custom-runtime-triton/"`                                                                                                    |             |
-| vectorEmbedJob.webSources[7]                                            | string | `"https://ai-on-openshift.io/odh-rhoai/openshift-group-management/"`                                                                                               |             |
-| vectorEmbedJob.webSources[8]                                            | string | `"https://ai-on-openshift.io/tools-and-applications/minio/minio/"`                                                                                                 |             |
+1. **Vector Database Provider** - Configurable database backend for storing embeddings ([deployment.yaml](./templates/deployment.yaml))
+2. **Database Service** - Service endpoint for database access ([service.yaml](./templates/service.yaml))
+3. **Vector Embedding Job** - Processes documents and creates embeddings ([vector-embed-job.yaml](./templates/vector-embed-job.yaml))
+4. **External Secret** - Manages database credentials via Vault integration ([external-secret.yaml](./templates/external-secret.yaml))
+
+### Configurable Options
+
+The chart supports the following configuration options via `values.yaml`:
+
+#### Global Configuration
+
+- `global.embeddingModel`: Hugging Face model for generating embeddings (default: "sentence-transformers/all-mpnet-base-v2")
+
+#### Database Provider Selection
+
+Choose one of the supported vector database providers by setting `enabled: true`:
+
+**Qdrant**
+
+- `providers.qdrant.enabled`: Enable Qdrant vector database
+- `providers.qdrant.deployment.image`: Qdrant container image
+- `providers.qdrant.service.port`: Service port (default: 6333)
+- `providers.qdrant.jobEnv`: Environment variables for the embedding job
+
+**Redis**
+
+- `providers.redis.enabled`: Enable Redis with vector search capabilities
+- `providers.redis.deployment.image`: Redis Stack container image
+- `providers.redis.service.port`: Service port (default: 6379)
+- `providers.redis.jobEnv`: Environment variables for the embedding job
+
+**PostgreSQL with pgvector**
+
+- `providers.pgvector.enabled`: Enable PostgreSQL with pgvector extension
+- `providers.pgvector.deployment.image`: PostgreSQL container image
+- `providers.pgvector.service.port`: Service port (default: 5432)
+- `providers.pgvector.secrets.vault.fields`: Database credentials managed by Vault
+
+**Elasticsearch**
+
+- `providers.elastic.enabled`: Enable Elasticsearch vector search
+- `providers.elastic.deployment.image`: Elasticsearch container image
+- `providers.elastic.service.port`: Service port (default: 9200)
+- `providers.elastic.secrets.vault.fields`: Database credentials managed by Vault
+
+**Microsoft SQL Server**
+
+- `providers.mssql.enabled`: Enable SQL Server with vector capabilities (default: true)
+- `providers.mssql.deployment.image`: SQL Server container image
+- `providers.mssql.service.port`: Service port (default: 1433)
+- `providers.mssql.secrets.vault.fields`: Database credentials managed by Vault
+
+#### Vector Embedding Job Configuration
+
+- `vectorEmbedJob.image`: Container image for the document processing job
+- `vectorEmbedJob.backoffLimit`: Maximum retry attempts (default: 10)
+- `vectorEmbedJob.logLevel`: Logging verbosity (default: "info")
+- `vectorEmbedJob.repoSources`: Git repositories to process for documents
+- `vectorEmbedJob.webSources`: Web URLs to scrape and embed
+- `vectorEmbedJob.chunking.size`: Text chunk size for embeddings (default: 1024)
+- `vectorEmbedJob.chunking.overlap`: Overlap between chunks (default: 40)
+
+## Prerequisites
+
+The following must be configured on your OpenShift cluster:
+
+- Red Hat OpenShift AI or OpenDataHub for model serving capabilities
+- Vault integration for secret management (configured by the Validated Pattern)
+- Sufficient cluster resources to meet the configured CPU/memory requirements
+- Network access to external document sources (for web scraping and Git repositories)
+
+### Secret Management
+
+The Validated Pattern automatically configures Vault and creates the required database secrets. To enable this functionality for database providers that require authentication, you must:
+
+1. Copy `values-secret.yaml.template` from the root of this repository to `$HOME/values-secret-$(basename $PWD).yaml` (outside of Git)
+2. Update the secret values in the copied file for the database providers you plan to use
+3. The following providers require secret configuration:
+   - **pgvector**: Requires `user`, `password`, and `db` fields
+   - **elastic**: Requires `user` and `password` fields
+   - **mssql**: Requires `sapassword` field
+
+Database credentials are then automatically generated and managed through:
+
+1. Vault secret storage and rotation
+2. External Secrets Operator integration
+3. Automatic connection string generation for each provider
+
+You can see all available secret fields that need to be configured in `values-secret.yaml.template`.
+
+## Data Sources
+
+The embedding job processes documents from multiple sources:
+
+### Repository Sources
+
+- Git repositories with configurable glob patterns for file selection
+- Default includes PDF documentation from the llm-on-openshift project
+
+### Web Sources
+
+- Web pages scraped and processed for embedding
+- Default includes comprehensive OpenShift AI documentation
+
+### Document Processing
+
+- Automatic text chunking with configurable size and overlap
+- Vector embedding generation using the specified Hugging Face model
+- Storage in the selected vector database provider
+
+## Helper Templates
+
+The chart includes helper templates for generating database connection strings and managing provider-specific configurations across different database backends.
+
+## Notes
+
+- Multiple database providers may be enabled simultaneously
+- The vector embedding job runs once to populate the database with initial content
+- Database persistence is configured with emptyDir volumes by default
+- Resource requests and limits should be adjusted based on document volume and expected query load
+- The embedding model can be changed, but requires reprocessing all documents
 
 ---
 
