@@ -1,0 +1,22 @@
+{{- range $providerName, $providerConfig := .Values.providers }}
+{{- if $providerConfig.enabled }}
+{{- range $volume := $providerConfig.persistence.volumes }}
+{{- if $volume.persistentVolumeClaim }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ printf "%s-%s" $.Release.Name $volume.persistentVolumeClaim.claimName }}
+  labels:
+    app.kubernetes.io/name: {{ $providerName }}
+    app.kubernetes.io/instance: {{ $.Release.Name }}
+spec:
+  accessModes:
+    - {{ $volume.persistentVolumeClaim.accessMode }}
+  resources:
+    requests:
+      storage: {{ $volume.persistentVolumeClaim.size }}
+{{- end }}
+{{- end }}
+{{- end }}
+{{- end }}

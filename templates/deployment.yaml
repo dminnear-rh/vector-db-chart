@@ -40,7 +40,15 @@ spec:
           {{- end }}
       {{- with $providerConfig.persistence.volumes }}
       volumes:
-        {{- toYaml . | nindent 8 }}
+        {{- range $volume := . }}
+        {{- if $volume.persistentVolumeClaim }}
+        - name: {{ $volume.name }}
+          persistentVolumeClaim:
+            claimName: {{ printf "%s-%s" $.Release.Name $volume.persistentVolumeClaim.claimName }}
+        {{- else }}
+        - {{- toYaml $volume | nindent 10 }}
+        {{- end }}
+        {{- end }}
       {{- end }}
 {{- end }}
 {{- end }}
